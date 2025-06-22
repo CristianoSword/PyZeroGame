@@ -13,6 +13,7 @@ STATE_PLAYING = 'playing'
 STATE_GAME_OVER = 'game_over'
 STATE_LEVEL_COMPLETE = 'level_complete'
 
+
 # Começa no menu
 game_state = STATE_MENU
 
@@ -22,24 +23,46 @@ sound_on = True
 # Herói do jogo
 class Player:
     def __init__(self):
-        self.actor = Actor('hero_idle1')
+        self.actor = Actor('hero_walk1')
         self.actor.pos = (100, FLOOR_Y)
         self.vy = 0
         self.on_ground = False
         self.speed = 4
 
+        self.walk_right = ['hero_walk1', 'hero_walk2']
+        self.walk_left = ['hero_walk1e', 'hero_walk2e']
+        self.frame = 0
+        self.frame_counter = 0
+        self.facing_right = True
+
+
+
     def update(self):
-        # Movimenta esquerda/direita
+
+         # Movimentação esquerda/direita com animação
+        moving = False
         if keyboard.left:
             self.actor.x -= self.speed
-            self.actor.image = 'hero_idle2'
-            self.actor.angle = 0
+            self.facing_right = False
+            moving = True
         elif keyboard.right:
             self.actor.x += self.speed
-            self.actor.image = 'hero_idle2'
-            self.actor.angle = 0
+            self.facing_right = True
+            moving = True
+
+        # Animação de movimento
+        if moving:
+            self.frame_counter += 1
+            if self.frame_counter >= 6:
+                self.frame = (self.frame + 1) % 2
+                self.frame_counter = 0
+            if self.facing_right:
+                self.actor.image = self.walk_right[self.frame]
+            else:
+                self.actor.image = self.walk_left[self.frame]
         else:
-            self.actor.image = 'hero_idle1'
+            self.actor.image = self.walk_right[0] if self.facing_right else self.walk_left[0]
+
 
         # Aplica gravidade
         self.vy += GRAVITY
@@ -124,8 +147,8 @@ platforms = [
     Rect((600, 220), (60, 15)),
     Rect((700, 190), (50, 15)),
     Rect((620, 150), (60, 15)),
-    Rect((520, 120), (50, 15)),
-    Rect((420, 90), (40, 15)),
+    Rect((520, 80), (50, 15)),
+    Rect((420, 70), (40, 15)),
     Rect((320, 60), (30, 15)),  # Pequena plataforma final
 ]
 
@@ -203,7 +226,7 @@ def draw():
 
     if game_state == STATE_MENU:
         screen.fill((30, 30, 30))
-        screen.draw.text("Cogumelo Game", center=(WIDTH // 2, 80), fontsize=60, color="white")
+        screen.draw.text("Snake Adventures", center=(WIDTH // 2, 80), fontsize=60, color="white")
         for button in buttons:
             button.draw()
 
