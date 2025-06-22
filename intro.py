@@ -32,11 +32,11 @@ class Player:
         # Movimenta esquerda/direita
         if keyboard.left:
             self.actor.x -= self.speed
-            self.actor.image = 'hero_walk1'
+            self.actor.image = 'hero_idle2'
             self.actor.angle = 0
         elif keyboard.right:
             self.actor.x += self.speed
-            self.actor.image = 'hero_walk1'
+            self.actor.image = 'hero_idle2'
             self.actor.angle = 0
         else:
             self.actor.image = 'hero_idle1'
@@ -62,8 +62,8 @@ class Player:
         # Pulo
         if keyboard.space and self.on_ground:
             self.vy = -14
-            # if sound_on:
-            #     sounds.jump.play()
+            if sound_on:
+                sounds.jump.play()
 
     def draw(self):
         self.actor.draw()
@@ -208,11 +208,16 @@ def draw():
             button.draw()
 
     elif game_state == STATE_PLAYING:
-        screen.fill((135, 206, 235))  # céu azul
+        screen.fill((10, 10, 30))  # céu azul escuro
 
         # Desenha plataformas
-        for plat in platforms:
-            screen.draw.filled_rect(plat, (100, 200, 100))
+        # Desenha chão em verde e o resto em marrom
+        for i, plat in enumerate(platforms):
+            if i == 0:
+                screen.draw.filled_rect(plat, (100, 200, 100))  # chão verde
+            else:
+                screen.draw.filled_rect(plat, (139, 69, 19))    # plataformas marrons
+
 
         # Desenha moeda
         coin.draw()
